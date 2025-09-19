@@ -29,7 +29,6 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     pkg-config \
     libssl-dev \
-    nvidia-utils-535 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -48,6 +47,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 FROM base-gpu AS builder-gpu
 WORKDIR /app
 COPY --from=planner-gpu /app/recipe.json recipe.json
+ENV CUDA_COMPUTE_CAP="80"
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=$SCCACHE_DIR,sharing=locked \
     cargo chef cook --release --features cuda --recipe-path recipe.json
@@ -65,12 +65,12 @@ RUN apt-get update && apt-get install -y \
 
 RUN useradd -r -s /bin/false appuser
 WORKDIR /app
-COPY --from=builder-cpu /app/target/release/inference-server /app/inference-server
-RUN chown appuser:appuser /app/inference-server
+COPY --from=builder-cpu /app/target/release/arbiter /app/arbiter
+RUN chown appuser:appuser /app/arbiter
 
 USER appuser
 EXPOSE 3000
-CMD ["./inference-server"]
+CMD ["./arbiter"]
 
 # GPU Runtime
 FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04 AS gpu
@@ -81,9 +81,9 @@ RUN apt-get update && apt-get install -y \
 
 RUN useradd -r -s /bin/false appuser
 WORKDIR /app
-COPY --from=builder-gpu /app/target/release/inference-server /app/inference-server
-RUN chown appuser:appuser /app/inference-server
+COPY --from=builder-gpu /app/target/release/arbiter /app/arbiter
+RUN chown appuser:appuser /app/arbiter
 
 USER appuser
 EXPOSE 3000
-CMD ["./inference-server"]
+CMD ["./arbiter"]
