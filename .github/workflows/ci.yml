@@ -49,7 +49,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata
         id: meta
@@ -72,4 +72,5 @@ jobs:
           files: ./docker-bake.hcl
           targets: default
           push: true
-          project: flsxgcrxh8  # You may need to update this with your depot project ID
+          project: flsxgcrxh8 # You may need to update this with your depot project ID
+
