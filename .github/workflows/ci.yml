@@ -57,7 +57,6 @@ jobs:
         env:
           DOCKER_METADATA_PR_HEAD_SHA: true
         with:
-          images: ghcr.io/doublewordai/arbiter
           sep-tags: ","
           tags: |
             type=sha,event=branch
