@@ -67,10 +67,11 @@ RUN useradd -r -s /bin/false appuser
 WORKDIR /app
 COPY --from=builder-cpu /app/target/release/arbiter /app/arbiter
 RUN chown appuser:appuser /app/arbiter
+RUN mkdir -p /home/appuser/.cache && chown -R appuser:appuser /home/appuser
 
 USER appuser
 EXPOSE 3000
-CMD ["./arbiter"]
+ENTRYPOINT ["./arbiter"]
 
 # GPU Runtime
 FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04 AS gpu
@@ -83,7 +84,8 @@ RUN useradd -r -s /bin/false appuser
 WORKDIR /app
 COPY --from=builder-gpu /app/target/release/arbiter /app/arbiter
 RUN chown appuser:appuser /app/arbiter
+RUN mkdir -p /home/appuser/.cache && chown -R appuser:appuser /home/appuser
 
 USER appuser
 EXPOSE 3000
-CMD ["./arbiter"]
+ENTRYPOINT ["./arbiter"]
