@@ -36,7 +36,7 @@ target "gpu" {
   target = "gpu"
   tags = TAGS != "" ? [for tag in split(",", TAGS) : "${REGISTRY}:${tag}-gpu"] : []
   labels = {}
-  platforms = ["linux/amd64"] # GPU builds typically only support amd64
+  platforms = split(",", PLATFORMS)
   annotations = []
   attest = [
     "type=provenance,mode=max",
