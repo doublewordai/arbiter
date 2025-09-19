@@ -1,6 +1,6 @@
 use anyhow::{Result, bail};
 use async_trait::async_trait;
-use candle_core::utils::cuda_is_available;
+use candle_core::utils::{cuda_is_available, metal_is_available};
 use candle_core::{Device, Tensor};
 use candle_nn::VarBuilder;
 use candle_nn::ops::softmax;
@@ -53,6 +53,9 @@ impl DebertaBatchedEngine {
     fn device(cpu: bool) -> Result<Device> {
         if cpu {
             Ok(Device::Cpu)
+        } else if metal_is_available() {
+            tracing::info!("Using metal acceleration");
+            Ok(Device::new_metal(0)?)
         } else if cuda_is_available() {
             tracing::info!("Using CUDA GPU acceleration");
             Ok(Device::new_cuda(0)?)
