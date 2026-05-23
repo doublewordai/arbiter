@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     cargo build --release
 
 # GPU Build Target
-FROM nvidia/cuda:12.4.0-devel-ubuntu22.04 AS base-gpu
+FROM nvidia/cuda:12.9.2-devel-ubuntu22.04 AS base-gpu
 RUN apt-get update && apt-get install -y \
     curl \
     build-essential \
@@ -74,7 +74,7 @@ EXPOSE 3000
 ENTRYPOINT ["./arbiter"]
 
 # GPU Runtime
-FROM nvidia/cuda:12.4.0-runtime-ubuntu22.04 AS gpu
+FROM nvidia/cuda:12.9.2-runtime-ubuntu22.04 AS gpu
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     libssl3 \
