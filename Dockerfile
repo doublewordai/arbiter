@@ -1,5 +1,5 @@
 # CPU Build Target
-FROM rust:1.88 AS base-cpu
+FROM rust:1.98 AS base-cpu
 RUN cargo install sccache --version ^0.7
 RUN cargo install cargo-chef --version ^0.1
 ENV RUSTC_WRAPPER=sccache SCCACHE_DIR=/sccache
